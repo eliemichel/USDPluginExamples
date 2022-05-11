@@ -13,6 +13,13 @@ set(USD_PYTHON_DIR "python")
 set(USD_PLUG_INFO_RESOURCES_DIR "resources")
 set(USD_PLUG_INFO_ROOT_DIR "usd")
 
+# Don't symlink on windows (it requires privilege elevation)
+if (WIN32)
+    set(SYMLINK_OR_COPY "copy")
+else ()
+    set(SYMLINK_OR_COPY "create_symlink")
+endif()
+
 #
 # Public entry point for building a C++ based USD shared library.
 #
@@ -437,7 +444,7 @@ function(_usd_cpp_library NAME)
         add_custom_command(
             TARGET ${NAME}
             POST_BUILD
-                COMMAND ${CMAKE_COMMAND} -E create_symlink $<TARGET_FILE:${NAME}> ${PROJECT_BINARY_DIR}/${LIBRARY_INSTALL_PREFIX}/$<TARGET_FILE_NAME:${NAME}>
+                COMMAND ${CMAKE_COMMAND} -E ${SYMLINK_OR_COPY} $<TARGET_FILE:${NAME}> ${PROJECT_BINARY_DIR}/${LIBRARY_INSTALL_PREFIX}/$<TARGET_FILE_NAME:${NAME}>
         )
     endif()
 
@@ -536,7 +543,7 @@ function(_usd_python_module NAME)
             add_custom_command(
                 TARGET ${PYLIB_NAME}
                 POST_BUILD
-                    COMMAND ${CMAKE_COMMAND} -E create_symlink $<TARGET_FILE:${PYLIB_NAME}> ${PROJECT_BINARY_DIR}/${PYTHON_INSTALL_PREFIX}/$<TARGET_FILE_NAME:${PYLIB_NAME}>
+                    COMMAND ${CMAKE_COMMAND} -E ${SYMLINK_OR_COPY} $<TARGET_FILE:${PYLIB_NAME}> ${PROJECT_BINARY_DIR}/${PYTHON_INSTALL_PREFIX}/$<TARGET_FILE_NAME:${PYLIB_NAME}>
             )
         endif()
 

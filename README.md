@@ -1,5 +1,11 @@
 <a href="https://github.com/wetadigital/USDPluginExamples/actions?query=workflow%3A%22Build+and+test%22"><img src="https://github.com/wetadigital/USDPluginExamples/workflows/Build%20and%20test/badge.svg"/></a>
 
+# Foreword
+
+*This fork ports the upstream project to Python 3.10.*
+
+**Warning** When building USD with Python 3.10, the following change must be done after the scripts downloads Boost source: In `%USD_INSTALL%\src\boost_1_70_0\libs\python\src\exec.cpp`, replace both occurrences of `_Py_fopen` with `fopen`.
+
 # USDPluginExamples
 
 A collection of example plugins for [Pixar's USD](https://github.com/PixarAnimationStudios/USD) (Universal Scene Description).
@@ -59,16 +65,15 @@ Example snippet for building a Visual Studio project on Windows:
 ```cmd
 mkdir build
 cd build
+set USD_INSTALL=D:\usd\USD_install
 cmake ^
-    .. ^
-    -G "Visual Studio 15 2017 Win64" ^
-    -DCMAKE_INSTALL_PREFIX=D:\usd\USDPluginExamples\ ^
-    -DUSE_PYTHON_3=ON ^
-    -DBUILD_TESTING=ON ^
-    -DUSD_ROOT="D:\usd\builds\v21.05" ^
-    -DTBB_ROOT="D:\usd\builds\v21.05" ^
-    -DBOOST_ROOT="D:\usd\builds\v21.05"
-
+  .. ^
+  -DUSD_ROOT=%USD_INSTALL% ^
+  -DTBB_ROOT=%USD_INSTALL% ^
+  -DBUILD_TESTING=ON ^
+  -DCMAKE_INSTALL_PREFIX="D:\usd\USDPluginExamples_install" ^
+  ..
+  
 cmake --build . --config Release -j 8 --target ALL_BUILD RUN_TESTS INSTALL
 ```
 
